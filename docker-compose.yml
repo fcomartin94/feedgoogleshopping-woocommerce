@@ -1,0 +1,38 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: fgs-wc-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: feedgoogleshopping_wc
+      MYSQL_USER: fgswc
+      MYSQL_PASSWORD: fgswc
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  wordpress:
+    image: wordpress:latest
+    container_name: fgs-wc-wordpress
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: feedgoogleshopping_wc
+      WORDPRESS_DB_USER: fgswc
+      WORDPRESS_DB_PASSWORD: fgswc
+    volumes:
+      - wordpress_data:/var/www/html
+
+volumes:
+  mysql_data:
+  wordpress_data:
