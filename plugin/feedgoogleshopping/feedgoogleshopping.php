@@ -3,7 +3,7 @@
 /**
 * Plugin Name: Feed Export for Google Shopping
 * Version: 1.0.0
-* Author: Francisco Antonio Martín Herzog
+* Author: Francisco Antonio Martín Hersog
 * Requires Plugins: woocommerce
 */
 
