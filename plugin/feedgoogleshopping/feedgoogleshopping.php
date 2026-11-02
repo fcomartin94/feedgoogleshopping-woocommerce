@@ -8,23 +8,23 @@
 */
 
 if (!defined('ABSPATH')) {
-	exit;
+    exit;
 }
 
 class FeedGoogleShoppingWC
 {
-	const QUERY_VAR = 'fgs_feed';
+    const QUERY_VAR = 'fgs_feed';
 
-	public function __construct()
-	{
-		add_action('init', [$this, 'addRewriteRule']);
-		add_filter('query_vars', [$this, 'addQueryVar']);
-        	add_action('template_redirect', [$this, 'maybeRenderFeed']);
-        	register_activation_hook(__FILE__, [$this, 'onActivate']);
-        	register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
-	}
+    public function __construct()
+    {
+        add_action('init', [$this, 'addRewriteRule']);
+        add_filter('query_vars', [$this, 'addQueryVar']);
+        add_action('template_redirect', [$this, 'maybeRenderFeed']);
+        register_activation_hook(__FILE__, [$this, 'onActivate']);
+        register_deactivation_hook(__FILE__, [$this, 'onDeactivate']);
+    }
 
-	public function addRewriteRule()
+    public function addRewriteRule()
     {
         add_rewrite_rule('^feed/google-shopping/?$', 'index.php?'.self::QUERY_VAR.'=1', 'top');
     }
@@ -84,7 +84,8 @@ class FeedGoogleShoppingWC
             if ($product->is_type('variable')) {
                 foreach ($product->get_children() as $variationId) {
                     $variation = wc_get_product($variationId);
-                    if ($variation) {
+                    // Skip disabled or private variations: they are not purchasable.
+                    if ($variation && 'publish' === $variation->get_status()) {
                         $this->writeItem($xml, $variation, $product, $currency);
                     }
                 }
@@ -117,7 +118,7 @@ class FeedGoogleShoppingWC
         $xml->startElement('item');
         $xml->writeElement('g:id', (string) $item->get_id());
         $xml->writeElement('g:title', $parent->get_name());
-        $xml->writeElement('g:description', wp_strip_all_tags($description));
+        $xml->writeElement('g:description', trim(wp_strip_all_tags($description)) ?: $parent->get_name());
         $xml->writeElement('g:link', $item->get_permalink());
         $xml->writeElement('g:image_link', $imageUrl);
         $xml->writeElement('g:availability', $availability);

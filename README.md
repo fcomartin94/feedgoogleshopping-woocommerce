@@ -71,6 +71,13 @@ See `/screenshots`:
 - `plugin_active.png` — plugin listed and active in the WordPress admin
 - `feed_output.png` — the generated XML feed, rendered in the browser
 
+## Known limitations
+
+- Variations that are not published (disabled or private) are left out of the feed.
+- The feed is generated on every request and loads all published products: fine for small
+  catalogs, but a large store should cache it (e.g. with a transient) or generate it on a schedule.
+- `g:brand` is the store name, since WooCommerce has no native brand field.
+
 ## License
 
 Released under the [MIT License](LICENSE).
