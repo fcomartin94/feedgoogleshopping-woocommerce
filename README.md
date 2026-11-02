@@ -70,3 +70,7 @@ default.
 See `/screenshots`:
 - `plugin_active.png` — plugin listed and active in the WordPress admin
 - `feed_output.png` — the generated XML feed, rendered in the browser
+
+## License
+
+Released under the [MIT License](LICENSE).
